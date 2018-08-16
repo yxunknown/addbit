@@ -1,6 +1,8 @@
 package com.hercat.mevur.addbit.activities
 
+import android.graphics.Color
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.app.AppCompatActivity
 import android.util.DisplayMetrics
 import android.view.WindowManager
@@ -15,6 +17,7 @@ import com.hercat.mevur.data.totalMoney
 import com.hercat.mevur.database.db
 import com.robinhood.ticker.TickerUtils
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.toast
 import java.text.SimpleDateFormat
