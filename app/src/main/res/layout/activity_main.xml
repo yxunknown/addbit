@@ -69,21 +69,6 @@
             android:scrollbarSize="0dp"
             android:scrollbars="none" />
 
-
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/edtPrice"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="50dp"
-            android:hint="请输入金额"
-            android:padding="0dp"
-            android:textColor="#212121"
-            android:textSize="14sp"
-            app:met_floatingLabel="highlight"
-            app:met_hideUnderline="true"
-            app:met_textColorHint="@color/colorAccent" />
-
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
