@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/menu_time"
+          android:icon="@drawable/time"
+          android:orderInCategory="100"
+          android:title="选择日期"
+          app:showAsAction="always"/>
+    <item android:id="@+id/menu_type"
+        android:icon="@drawable/day"
+        android:orderInCategory="90"
+        android:title="选择类型"
+        app:showAsAction="always"/>
+</menu>
