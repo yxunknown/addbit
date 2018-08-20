@@ -7,11 +7,54 @@
     tools:context=".activities.AnalysActivity">
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <android.support.v7.widget.Toolbar
+        android:layout_height="wrap_content"
+        android:elevation="12dp">
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:id="@+id/toolbar"/>
+            android:id="@+id/toolbar">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/tvTitle"
+                android:textColor="#fff"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:text="sds"/>
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="5dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:id="@+id/btnDate"
+                android:src="@drawable/time"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/item_ripple"
+                android:layout_gravity="center_vertical|end"/>
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="5dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:id="@+id/btnType"
+                android:src="@drawable/day"
+                android:layout_marginEnd="50dp"
+                android:background="@drawable/item_ripple"
+                android:layout_gravity="center_vertical|end"/>
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:padding="5dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:id="@+id/btnBack"
+                android:src="@drawable/back"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/item_ripple"
+                android:layout_gravity="center_vertical|start"/>
+        </FrameLayout>
     </android.support.design.widget.AppBarLayout>
 
     <com.github.mikephil.charting.charts.BarChart

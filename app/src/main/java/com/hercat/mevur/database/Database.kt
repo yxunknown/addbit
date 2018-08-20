@@ -37,7 +37,7 @@ class Database(val context: Context) {
     fun selectByMonth(month: String): List<Cost> {
         return db.use {
             select("cost")
-                    .whereArgs("date LIKE {date%}", "date" to month)
+                    .whereArgs("date LIKE {date}", "date" to "$month%")
                     .parseList(CostParser)
         }
 
@@ -46,7 +46,7 @@ class Database(val context: Context) {
     fun selectByYear(year: String): List<Cost> {
         return db.use {
             select("cost")
-                    .whereArgs("date LIKE {date}", "date" to year)
+                    .whereArgs("date LIKE {date}", "date" to "$year%")
                     .parseList(CostParser)
         }
     }

@@ -1,12 +1,9 @@
 package com.hercat.mevur.addbit.activities
 
-import android.app.DatePickerDialog
-import android.graphics.Color
 import android.graphics.Matrix
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
-import android.widget.DatePicker
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
@@ -19,10 +16,8 @@ import com.hercat.mevur.addbit.R
 import com.hercat.mevur.data.Cost
 import com.hercat.mevur.database.db
 import kotlinx.android.synthetic.main.activity_analys.*
-import org.jetbrains.anko.toast
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.logging.SimpleFormatter
 
 class AnalysActivity : AppCompatActivity() {
 
@@ -37,13 +32,10 @@ class AnalysActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_analys)
-        setSupportActionBar(toolbar)
-        toolbar.setTitleTextColor(Color.WHITE)
-        toolbar.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.menu_time -> {
-                    val timePicker = TimePickerBuilder(this) { date, _ ->
-                        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
+        tvTitle.text = today()
+        btnDate.setOnClickListener { _ ->
+            val timePicker = TimePickerBuilder(this) { date, _ ->
+                                        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)
                         freshBarChart(simpleDateFormat.format(date))
                     }
                             .setDate(date)
@@ -53,9 +45,9 @@ class AnalysActivity : AppCompatActivity() {
                             .isDialog(true)
                             .build()
                     timePicker.show()
-                }
-                R.id.menu_type -> {
-                    MaterialDialog(this)
+        }
+        btnType.setOnClickListener { v ->
+            MaterialDialog(this)
                             .listItemsSingleChoice(items = listOf("按天统计", "按月统计", "按年统计"),
                                     initialSelection = currentSelect) {dialog, index, text ->
                                 currentSelect = index
@@ -65,13 +57,12 @@ class AnalysActivity : AppCompatActivity() {
                                     2 -> R.drawable.year
                                     else -> 0
                                 }
-                                item.setIcon(icon)
+                                btnType.setImageResource(icon)
+                                freshBarChart(selection = today())
                             }
                             .show()
-                }
-            }
-            true
         }
+        btnBack.setOnClickListener { onBackPressed() }
         initBarChart()
         freshBarChart(today())
     }
@@ -83,20 +74,26 @@ class AnalysActivity : AppCompatActivity() {
     }
 
     private fun freshBarChart(selection: String) {
-        toast(selection)
+
+        tvTitle.text = when(currentSelect) {
+            0 -> selection
+            1 -> selection.substringBeforeLast("-")
+            2 -> selection.substringBefore("-")
+            else -> ""
+        }
+
         date.time = with(SimpleDateFormat("yyyy-MM-dd", Locale.CHINA)) {
             parse(selection)
         }
-        costs.clear()
         val currentCost = when(currentSelect) {
             0 -> db.selectByDay(selection)
             1 -> {
                 db.selectByMonth(month = selection.substringBeforeLast("-"))
                         .asSequence()
-                        .groupBy { it.datetime }
+                        .groupBy { it.datetime.substringBefore(" ") }
                         .map { Cost(datetime = it.key,
                                 price = it.value.sumByDouble { it.price },
-                                tag = "") }
+                                tag = "日消费") }
                         .toList()
             }
             2 -> {
@@ -110,6 +107,7 @@ class AnalysActivity : AppCompatActivity() {
             }
             else -> listOf()
         }
+        costs.clear()
         costs.addAll(currentCost)
         if (costs.size == 0) {
             barChart.clear()
@@ -120,12 +118,7 @@ class AnalysActivity : AppCompatActivity() {
             barChart.invalidate()
         } else {
             barChart.clear()
-            barChart.description.text = when(currentSelect) {
-                0 -> selection
-                1 -> selection.substringBeforeLast("-")
-                2 -> selection.substringBefore("-")
-                else -> ""
-            } + " 消费统计"
+            barChart.description.text = tvTitle.text.toString() + " 消费统计  消费总金额:￥${costs.sumByDouble { it.price }}"
             val entris: MutableList<BarEntry> = mutableListOf()
             for ((index, cost) in costs.withIndex()) {
                 val entry = BarEntry(index.toFloat(), cost.price.toFloat())
@@ -134,18 +127,27 @@ class AnalysActivity : AppCompatActivity() {
             val barDataSet = BarDataSet(entris, "消费")
             barDataSet.isHighlightEnabled = true
             val barData = BarData(barDataSet)
+            barData.setValueFormatter { value, entry, dataSetIndex, viewPortHandler ->
+                value.toString() + "元"
+            }
             barData.barWidth = 0.5f
             barChart.data = barData
 
+
             val labels = costs.asSequence()
                     .map {
-                        it.datetime.substringAfter(" ")
-                                .substringBeforeLast(":")
+                        when(currentSelect) {
+                            0 -> it.datetime.substringAfter(" ")
+                                    .substringBeforeLast(":")
+                            1 -> selection.substringAfter("-")
+                            2 -> selection.substringBeforeLast("-")
+                            else -> ""
+                        }
                     }
                     .toList()
             barChart.xAxis.setValueFormatter { value, _ ->
                 val index = value.toInt()
-                if (value < 0 || value > labels.size) {
+                if (value < 0 || value >= labels.size) {
                     ""
                 } else {
                     labels[index]
@@ -158,7 +160,7 @@ class AnalysActivity : AppCompatActivity() {
             }
 
             val matrix: Matrix = when {
-                (labels.size <= 10) -> getMatrix(1.0f)
+                (labels.size <= 10) -> getMatrix(labels.size / 10f)
                 (labels.size <= 20) -> getMatrix(2.0f)
                 (labels.size <= 30) -> getMatrix(3.0f)
                 (labels.size <= 40) -> getMatrix(4.0f)
@@ -177,7 +179,7 @@ class AnalysActivity : AppCompatActivity() {
 
         barChart.legend.isEnabled = false
         barChart.description.isEnabled = true
-        barChart.description.setPosition(250f, 50f)
+        barChart.description.setPosition(480f, 50f)
         barChart.description.textColor = resources.getColor(R.color.colorPrimary)
         barChart.setScaleEnabled(true)
         barChart.isDragEnabled = true

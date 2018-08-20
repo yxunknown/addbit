@@ -7,7 +7,7 @@
           android:title="选择日期"
           app:showAsAction="always"/>
     <item android:id="@+id/menu_type"
-        android:icon="@drawable/day"
+        android:icon="@drawable/time"
         android:orderInCategory="90"
         android:title="选择类型"
         app:showAsAction="always"/>
