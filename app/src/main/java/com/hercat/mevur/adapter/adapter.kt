@@ -21,11 +21,11 @@ class CostListAdapter(val data: List<Cost>,
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val cost = data[position]
         val view = convertView ?: getViewFromXml(R.layout.item_list_cost, null, context)
-        val tvId = view.findViewById<TextView>(R.id.tvId)
+        val tvTag = view.findViewById<TextView>(R.id.tvTag)
         val tvTime = view.findViewById<TextView>(R.id.tvTime)
         val tvPrice = view.findViewById<TextView>(R.id.tvPrice)
-        tvId.text = (position + 1).toString()
-        tvTime.text = cost.datetime.substringBeforeLast(":").substringAfterLast(" ")
+        tvTag.text = cost.tag
+        tvTime.text = cost.datetime
         tvPrice.text = "￥ ${cost.price}"
         return view
     }

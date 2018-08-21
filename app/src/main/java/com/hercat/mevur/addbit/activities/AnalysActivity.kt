@@ -1,5 +1,6 @@
 package com.hercat.mevur.addbit.activities
 
+import android.graphics.Color
 import android.graphics.Matrix
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -8,6 +9,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
 import com.afollestad.materialdialogs.list.listItemsSingleChoice
 import com.bigkoo.pickerview.builder.TimePickerBuilder
+import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -126,10 +128,13 @@ class AnalysActivity : AppCompatActivity() {
             }
             val barDataSet = BarDataSet(entris, "消费")
             barDataSet.isHighlightEnabled = true
+            barDataSet.color = Color.parseColor("#5ab1ef")
+            barDataSet.highLightColor = Color.parseColor("#59678c")
             val barData = BarData(barDataSet)
             barData.setValueFormatter { value, entry, dataSetIndex, viewPortHandler ->
                 value.toString() + "元"
             }
+            barData.setValueTextColor(Color.parseColor("#0098d9"))
             barData.barWidth = 0.5f
             barChart.data = barData
 
@@ -168,7 +173,7 @@ class AnalysActivity : AppCompatActivity() {
             }
             barChart.viewPortHandler.refresh(matrix, barChart, false)
             // x轴执行动画
-            barChart.animateX(500)
+            barChart.animateXY(1000, 1000)
             barChart.invalidate()
         }
 
